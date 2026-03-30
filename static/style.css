@@ -1,6 +1,6 @@
 body {
     font-family: 'Poppins', sans-serif;
-    background: #0A0F2C;
+    background: linear-gradient(135deg, #0A0F2C, #121842);
     color: #fff;
     margin: 0;
 }
@@ -10,21 +10,48 @@ body {
 }
 
 .card {
-    background: #121842;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
     padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+h2 {
+    margin-bottom: 10px;
 }
 
 button {
-    background: #00D4FF;
+    background: linear-gradient(45deg, #00D4FF, #7B2FFF);
     border: none;
     padding: 10px 15px;
-    border-radius: 8px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
     margin: 5px;
+}
+
+input, select {
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    margin: 5px;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+}
+
+.day {
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
     cursor: pointer;
 }
 
 .present { background: #28a745; }
 .absent { background: #dc3545; }
-.leave { background: #ffc107; }
+.leave { background: #ffc107; color: #000; }
