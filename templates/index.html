@@ -1,23 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Adnan Attendance</title>
+    <title>Attendance Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<h2>Adnan - Warehouse Supervisor (OLIVE TS)</h2>
+<div class="container">
 
-<p>Today: {{today}}</p>
-<p>Status: {{status}}</p>
-<p>RL Balance: {{rl}}</p>
+<h2>Adnan | Warehouse Supervisor (OLIVE TS)</h2>
+
+<div class="card">
+    <p>Today: {{today}}</p>
+    <p>Status: {{status}}</p>
+</div>
+
+<div class="card">
+    <p>Total Present: {{present}}</p>
+    <p>RL Balance: {{rl}}</p>
+</div>
 
 <form method="POST" action="/mark">
     <input type="hidden" name="date" value="{{today}}">
-    <button name="status" value="Present">Present</button>
-    <button name="status" value="Absent">Absent</button>
+    <button class="present" name="status" value="Present">Present</button>
+    <button class="absent" name="status" value="Absent">Absent</button>
 </form>
 
 <h3>Apply Leave</h3>
+
 <form method="POST" action="/leave">
     <select name="type">
         <option>RL</option>
@@ -25,12 +35,14 @@
         <option>SL</option>
         <option>AL</option>
     </select>
-    From: <input type="date" name="start">
-    To: <input type="date" name="end">
+    <input type="date" name="start">
+    <input type="date" name="end">
     <button type="submit">Apply</button>
 </form>
 
-<a href="/calendar">View Calendar</a>
+</div>
+
+<script src="/static/app.js"></script>
 
 </body>
 </html>
