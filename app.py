@@ -49,8 +49,8 @@ def index():
 
 @app.route("/mark", methods=["POST"])
 def mark():
-    date = request.form["date"]
-    status = request.form["status"]
+    date = request.form.get("date")
+    status = request.form.get("status")
 
     conn = sqlite3.connect(DB)
     c = conn.cursor()
@@ -58,28 +58,8 @@ def mark():
     conn.commit()
     conn.close()
 
-    return redirect("/")
-
-@app.route("/leave", methods=["POST"])
-def leave():
-    leave_type = request.form["type"]
-    start = datetime.strptime(request.form["start"], "%Y-%m-%d")
-    end = datetime.strptime(request.form["end"], "%Y-%m-%d")
-
-    conn = sqlite3.connect(DB)
-    c = conn.cursor()
-
-    while start <= end:
-        c.execute("INSERT OR REPLACE INTO attendance VALUES (?,?)",
-                  (start.strftime("%Y-%m-%d"), leave_type))
-        start += timedelta(days=1)
-
-    conn.commit()
-    conn.close()
-
     return redirect("/calendar")
-
-@app.route("/calendar-data")
+    @app.route("/calendar-data")
 def calendar_data():
     conn = sqlite3.connect(DB)
     c = conn.cursor()
