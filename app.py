@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 DB = "attendance.db"
 
+# ------------------ DB INIT ------------------
 def init_db():
     conn = sqlite3.connect(DB)
     c = conn.cursor()
@@ -17,6 +18,7 @@ def init_db():
 
 init_db()
 
+# ------------------ LOGIC ------------------
 def get_present_count():
     conn = sqlite3.connect(DB)
     c = conn.cursor()
@@ -28,6 +30,8 @@ def get_present_count():
 def calculate_rl():
     present = get_present_count()
     return (present - 20) // 2 if present > 20 else 0
+
+# ------------------ ROUTES ------------------
 
 @app.route("/")
 def index():
@@ -41,11 +45,13 @@ def index():
 
     status = row[0] if row else None
 
-    return render_template("index.html",
-                           today=today,
-                           status=status,
-                           rl=calculate_rl(),
-                           present=get_present_count())
+    return render_template(
+        "index.html",
+        today=today,
+        status=status,
+        rl=calculate_rl(),
+        present=get_present_count()
+    )
 
 @app.route("/mark", methods=["POST"])
 def mark():
@@ -58,15 +64,43 @@ def mark():
     conn.commit()
     conn.close()
 
+    return redirect("/")
+
+@app.route("/leave", methods=["POST"])
+def leave():
+    leave_type = request.form.get("type")
+    start = datetime.strptime(request.form.get("start"), "%Y-%m-%d")
+    end = datetime.strptime(request.form.get("end"), "%Y-%m-%d")
+
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+
+    while start <= end:
+        c.execute(
+            "INSERT OR REPLACE INTO attendance VALUES (?,?)",
+            (start.strftime("%Y-%m-%d"), leave_type)
+        )
+        start += timedelta(days=1)
+
+    conn.commit()
+    conn.close()
+
     return redirect("/calendar")
-    @app.route("/calendar-data")
+
+@app.route("/calendar")
+def calendar():
+    return render_template("calendar.html")
+
+@app.route("/calendar-data")
 def calendar_data():
     conn = sqlite3.connect(DB)
     c = conn.cursor()
     c.execute("SELECT * FROM attendance")
     data = c.fetchall()
     conn.close()
+
     return jsonify(data)
 
+# ------------------ RUN ------------------
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=8080)
