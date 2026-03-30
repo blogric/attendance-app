@@ -1,0 +1,30 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #0A0F2C;
+    color: #fff;
+    margin: 0;
+}
+
+.container {
+    padding: 20px;
+}
+
+.card {
+    background: #121842;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+
+button {
+    background: #00D4FF;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.present { background: #28a745; }
+.absent { background: #dc3545; }
+.leave { background: #ffc107; }
