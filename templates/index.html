@@ -1,1 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adnan Attendance</title>
+</head>
+<body>
 
+<h2>Adnan - Warehouse Supervisor (OLIVE TS)</h2>
+
+<p>Today: {{today}}</p>
+<p>Status: {{status}}</p>
+<p>RL Balance: {{rl}}</p>
+
+<form method="POST" action="/mark">
+    <input type="hidden" name="date" value="{{today}}">
+    <button name="status" value="Present">Present</button>
+    <button name="status" value="Absent">Absent</button>
+</form>
+
+<h3>Apply Leave</h3>
+<form method="POST" action="/leave">
+    <select name="type">
+        <option>RL</option>
+        <option>CL</option>
+        <option>SL</option>
+        <option>AL</option>
+    </select>
+    From: <input type="date" name="start">
+    To: <input type="date" name="end">
+    <button type="submit">Apply</button>
+</form>
+
+<a href="/calendar">View Calendar</a>
+
+</body>
+</html>
