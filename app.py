@@ -1,20 +1,17 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 import sqlite3
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
-
 DB = "attendance.db"
 
 def init_db():
     conn = sqlite3.connect(DB)
     c = conn.cursor()
-
     c.execute('''CREATE TABLE IF NOT EXISTS attendance (
         date TEXT PRIMARY KEY,
         status TEXT
     )''')
-
     conn.commit()
     conn.close()
 
@@ -30,9 +27,7 @@ def get_present_count():
 
 def calculate_rl():
     present = get_present_count()
-    if present > 20:
-        return (present - 20) // 2
-    return 0
+    return (present - 20) // 2 if present > 20 else 0
 
 @app.route("/")
 def index():
@@ -41,27 +36,25 @@ def index():
     conn = sqlite3.connect(DB)
     c = conn.cursor()
     c.execute("SELECT status FROM attendance WHERE date=?", (today,))
-    data = c.fetchone()
+    row = c.fetchone()
     conn.close()
 
-    status = data[0] if data else None
+    status = row[0] if row else None
 
     return render_template("index.html",
                            today=today,
                            status=status,
-                           rl=calculate_rl())
+                           rl=calculate_rl(),
+                           present=get_present_count())
 
 @app.route("/mark", methods=["POST"])
 def mark():
-    status = request.form["status"]
     date = request.form["date"]
+    status = request.form["status"]
 
     conn = sqlite3.connect(DB)
     c = conn.cursor()
-
-    c.execute("INSERT OR REPLACE INTO attendance (date, status) VALUES (?,?)",
-              (date, status))
-
+    c.execute("INSERT OR REPLACE INTO attendance VALUES (?,?)", (date, status))
     conn.commit()
     conn.close()
 
@@ -77,24 +70,23 @@ def leave():
     c = conn.cursor()
 
     while start <= end:
-        c.execute("INSERT OR REPLACE INTO attendance (date, status) VALUES (?,?)",
+        c.execute("INSERT OR REPLACE INTO attendance VALUES (?,?)",
                   (start.strftime("%Y-%m-%d"), leave_type))
         start += timedelta(days=1)
 
     conn.commit()
     conn.close()
 
-    return redirect("/")
+    return redirect("/calendar")
 
-@app.route("/calendar")
-def calendar():
+@app.route("/calendar-data")
+def calendar_data():
     conn = sqlite3.connect(DB)
     c = conn.cursor()
     c.execute("SELECT * FROM attendance")
     data = c.fetchall()
     conn.close()
-
-    return render_template("calendar.html", data=data)
+    return jsonify(data)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
