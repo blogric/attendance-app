@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Attendance Dashboard</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
 <div class="container">
 
-<h2>Adnan | Warehouse Supervisor (OLIVE TS)</h2>
+<h2>Adnan | OLIVE TS</h2>
 
 <div class="card">
     <p>Today: {{today}}</p>
@@ -20,25 +20,23 @@
     <p>RL Balance: {{rl}}</p>
 </div>
 
-<form method="POST" action="/mark">
-    <input type="hidden" name="date" value="{{today}}">
-    <button class="present" name="status" value="Present">Present</button>
-    <button class="absent" name="status" value="Absent">Absent</button>
-</form>
+<div class="card">
+    <h3>Mark Attendance (Any Date)</h3>
+    <form method="POST" action="/mark">
+        <input type="date" name="date" value="{{today}}">
+        <select name="status">
+            <option>Present</option>
+            <option>Absent</option>
+            <option>RL</option>
+            <option>CL</option>
+            <option>SL</option>
+            <option>AL</option>
+        </select>
+        <button type="submit">Save</button>
+    </form>
+</div>
 
-<h3>Apply Leave</h3>
-
-<form method="POST" action="/leave">
-    <select name="type">
-        <option>RL</option>
-        <option>CL</option>
-        <option>SL</option>
-        <option>AL</option>
-    </select>
-    <input type="date" name="start">
-    <input type="date" name="end">
-    <button type="submit">Apply</button>
-</form>
+<a href="/calendar">📅 Open Calendar</a>
 
 </div>
 
