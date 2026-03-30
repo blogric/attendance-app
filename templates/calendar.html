@@ -2,27 +2,59 @@
 <html>
 <head>
     <title>Calendar</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
+<div class="container">
+
 <h2>Attendance Calendar</h2>
 
-<table border="1">
-<tr>
-    <th>Date</th>
-    <th>Status</th>
-</tr>
+<div class="card">
+    <div class="calendar" id="calendar"></div>
+</div>
 
-{% for row in data %}
-<tr>
-    <td>{{row[0]}}</td>
-    <td>{{row[1]}}</td>
-</tr>
-{% endfor %}
+</div>
 
-</table>
+<script>
+fetch('/calendar-data')
+.then(res => res.json())
+.then(data => {
 
-<a href="/">Back</a>
+    let map = {};
+    data.forEach(d => map[d[0]] = d[1]);
+
+    let cal = document.getElementById("calendar");
+
+    for (let i = 1; i <= 31; i++) {
+        let day = document.createElement("div");
+        day.className = "day";
+
+        let date = "2026-03-" + String(i).padStart(2, '0');
+        day.innerHTML = i;
+
+        if (map[date]) {
+            if (map[date] === "Present") day.classList.add("present");
+            else if (map[date] === "Absent") day.classList.add("absent");
+            else day.classList.add("leave");
+        }
+
+        day.onclick = () => {
+            let status = prompt("Enter: Present / Absent / RL / CL / SL / AL");
+            if (status) {
+                fetch("/mark", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: `date=${date}&status=${status}`
+                }).then(()=>location.reload());
+            }
+        };
+
+        cal.appendChild(day);
+    }
+
+});
+</script>
 
 </body>
 </html>
